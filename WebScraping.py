@@ -2,9 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import date
 
-"""O código busca a ultima versão do TISS no 
-
-"""
 # Obtendo o mês e ano atuais para uma busca mais genérica no site
 data_atual = date.today()
 mes_atual = data_atual.month
@@ -41,7 +38,6 @@ def get_page_content(link):
 # Busca a ultima versão do TSS no primeiro site
 def query1(content):
     try:
-
         soup_content = BeautifulSoup(content,'html.parser')
         #Busca sempre o a versão do arquivo referente ao mês anterior ao que o código é rodado
         item = soup_content.find('a',string = f'Clique aqui para acessar a versão {meses_map[mes_atual-1]}/{ano_atual}')
@@ -49,7 +45,7 @@ def query1(content):
         return url
     except:
         if item == None:
-            print('Não foi possível encontrar o link da ultima versão do Padrão TISS na página principal')
+            print(f'Não foi possível encontrar o link da ultima versão {meses_map[mes_atual-1]}/{ano_atual} do Padrão TISS na página principal')
         else:
             return None
 
