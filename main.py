@@ -1,51 +1,29 @@
 import requests
 from bs4 import BeautifulSoup
-from datetime import date
-
-# Obtendo o mês e ano atuais para uma busca mais genérica no site
-data_atual = date.today()
-mes_atual = data_atual.month
-ano_atual = data_atual.year
-
-# mapeamento dos meses do ano por meio de um dicionário
-meses_map ={
-    1: 'Janeiro',
-    2: 'Fevereiro',
-    3: 'Março',
-    4: 'Abril',
-    5: 'Maio',
-    6: 'Junho',
-    7: 'Julho',
-    8: 'Agosto',
-    9: 'Setembro',
-    10: 'Outubro',
-    11: 'Novembro',
-    12: 'Dezembro',
-}
 
 url = "https://www.gov.br/ans/pt-br/assuntos/prestadores/padrao-para-troca-de-informacao-de-saude-suplementar-2013-tiss"
 
-
-# Realiza as requisições ao link solicitado
+# Realiza as requisições ao link dado e retorna o conteúdo da página
 def get_page_content(link):
     try:
         file = requests.get(link)
         return file.content
     except:
         print(f'Não foi possivel obter o conteúdo do link {link}')
+        print("Verifique sua conexão com a internet ou a disponibilidade do site")
         return 0
 
-# Busca a ultima versão do TSS no primeiro site
+# Busca a ultima versão do Padrão TSS no primeiro site
 def query1(content):
     try:
         soup_content = BeautifulSoup(content,'html.parser')
         #Busca sempre o a versão do arquivo referente ao mês anterior ao que o código é rodado
-        item = soup_content.find('a',string = f'Clique aqui para acessar a versão {meses_map[mes_atual-1]}/{ano_atual}')
+        item = soup_content.find('a',string = f'Clique aqui para acessar a versão Novembro/2021')
         url = item.get('href')
         return url
     except:
         if item == None:
-            print(f'Não foi possível encontrar o link da ultima versão {meses_map[mes_atual-1]}/{ano_atual} do Padrão TISS na página principal')
+            print(f'Não foi possível encontrar o link da ultima versão Novembro/2021 do Padrão TISS na página principal')
         else:
             return None
 
