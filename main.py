@@ -3,17 +3,30 @@ from bs4 import BeautifulSoup
 
 url = "https://www.gov.br/ans/pt-br/assuntos/prestadores/padrao-para-troca-de-informacao-de-saude-suplementar-2013-tiss"
 
-# Realiza as requisições ao link dado e retorna o conteúdo da página
+# makes request to the given webpage link
 def get_page_content(link):
     try:
-        file = requests.get(link)
+        contador = 0
+        while True:
+            file = requests.get(link)
+            print(f"Requesting page {link}")
+            if file != None:
+                print("request succed")
+                print("................................................................................")
+                break
+            elif file is None:
+                contador = contador + 1
+                print('Some error ocorred ,trying again')
+                print(f'attempt {contador}')
+            if contador == 7:
+                break
         return file.content
     except:
-        print(f'Não foi possivel obter o conteúdo do link {link}')
-        print("Verifique sua conexão com a internet ou a disponibilidade do site")
+        print(f'Cannot get {link} webpage content')
+        print("Please check your internet connection or website disponibility and try again")
         return 0
 
-# Busca a ultima versão do Padrão TSS no primeiro site
+# Find last version of TISS on first webpage
 def query1(content):
     try:
         soup_content = BeautifulSoup(content,'html.parser')
@@ -21,13 +34,13 @@ def query1(content):
         item = soup_content.find('a',string = f'Clique aqui para acessar a versão Novembro/2021')
         url = item.get('href')
         return url
-    except:
+    except ConnectionRefusedError:
         if item == None:
-            print(f'Não foi possível encontrar o link da ultima versão Novembro/2021 do Padrão TISS na página principal')
+            print(f'Cannot find Novembro/2021 TISS version on first webpage')
         else:
             return None
 
-#Busca o arquivo componente organizacional no segundo site 
+#Find organizational component on second website 
 def query2(content):
     try:
         site = BeautifulSoup(content,'html.parser')
@@ -42,17 +55,18 @@ def query2(content):
                 return item.get('href')
     except:
         if items == []:
-            print('Não foi possível encontrar a Componente Organizacional do Padrão TISS')
+            print('Cannot find "Componente Organizacional do Padrão TISS"')
         else:
             return None
-
-# Faz o donwload do arquivo encontrado pela função query2
+# makes download of file found by query2 function
 def download_file(file_content):
     try:
         with open('Componente_organizacional.pdf','wb') as file:
             file.write(file_content)
+        return "'Componente organizacional do TISS' downloaded with sucess !!!"
     except:
-        print("Não foi possível obter o arquivo correspondente ao Componente organizacional do Padrão TISS")
+        print("Cannot get file 'Componente organizacional do Padrão TISS'")
+        return False
 
 def main():
     content = get_page_content(url)
@@ -64,7 +78,7 @@ def main():
                 url2 = query2(content_1)
                 if url2 != None:
                     content_2 = get_page_content(url2)
-                    download_file(content_2)
-                    print("Arquivo Obtido com sucesso!!!")
+                    message = download_file(content_2)
+                    print(message)
 
 main()
