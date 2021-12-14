@@ -10,11 +10,11 @@ def get_page_content(link):
         while True:
             file = requests.get(link)
             print(f"Requesting page {link}")
-            if file != None:
+            if file.status_code == 200:
                 print("request succed")
                 print("................................................................................")
                 break
-            elif file is None:
+            else:
                 contador = contador + 1
                 print('Some error ocorred ,trying again')
                 print(f'attempt {contador}')
