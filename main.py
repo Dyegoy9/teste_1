@@ -14,7 +14,7 @@ def get_page_content(link):
                 print("request succed")
                 print("................................................................................")
                 break
-            else:
+            if file is None:
                 contador = contador + 1
                 print('Some error ocorred ,trying again')
                 print(f'attempt {contador}')
